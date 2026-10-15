@@ -1,0 +1,139 @@
+E-Commerce Platform
+
+1. Retrieve products
+
+> Endpoint - `GET /products`
+> Response Body -
+  [
+    Product1 : {},
+    Product2 : {}, 
+    .. 
+    Productn : {}, 
+  ]
+> Response - `200 OK`
+
+
+ 2. Retrieve product details
+
+> Endpoint - `GET /products/{productId}`
+> Response Body -
+  {
+    "id": 1,
+    "name": "Book1",
+    "description": "Books of 2025",
+    "price": 400
+  }
+
+> Response - `200 OK`
+
+
+
+3. Adding items to a cart
+
+> Endpoint - POST /carts/{cartId}/items
+> Request Body -
+{
+  "productId": 1,
+  "quantity": 2
+}
+> Response Body -
+{
+  "message": "Item added to cart"
+}
+> Response - `200 OK`
+
+
+4. Deleting items from a cart
+
+> Endpoint - DELETE /carts/{cartId}/items/{itemId}
+> Response Body -
+{
+  "message": "Item removed from cart"
+}
+> Response - `200 OK`
+
+
+ 5. Retrieving items from a cart
+
+> Endpoint - GET /carts/{cartId}/items
+> Response Body -
+  [
+    {
+      "productId": 1,
+      "name": "Book1",
+      "quantity": 2,
+      "price": 400
+    },
+    {
+      "productId": 2,
+      "name": "Book2",
+      "quantity": 1,
+      "price": 300
+    }
+  ]
+> Response - `200 OK`
+
+
+ 6. Placing an order
+
+Wrong -
+> Endpoint - POST /users/{userId}/orders
+
+Right 
+> Endpoint - POST /orders
+
+Reason - Backend will retrieve userid from access token
+
+> Request Body -
+  {
+    "cartId": 10,
+    "shippingAddress": "Pune, Maharashtra"
+  }
+
+> Response Body -
+  {
+    "orderId": 5001,
+    "message": "Order placed successfully"
+  }
+
+> Response - `200 OK`
+
+
+7. Canceling an order
+
+> Endpoint - PATCH /orders/{orderId}
+> Request Body -
+  {
+    "status": "cancelled"
+  }
+
+> Response Body -
+  {
+    "message": "Order cancelled successfully"
+  }
+
+> Response - `200 OK`
+
+
+ 8. Get previous orders
+ Should also return orders for a user for a given time range
+
+> Endpoint - GET /orders?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD
+
+> Response Body -
+{
+  {
+    "orderId": 5001,
+    "orderDate": "2026-02-15",
+    "totalAmount": 1200,
+    "status": "Delivered"
+  },
+  {
+    "orderId": 5002,
+    "orderDate": "2026-03-10",
+    "totalAmount": 800,
+    "status": "Cancelled"
+  }
+}
+
+> Response - `200 OK`
