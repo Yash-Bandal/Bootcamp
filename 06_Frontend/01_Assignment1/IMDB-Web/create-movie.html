@@ -1,0 +1,387 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>IMDB | Add Movie</title>
+
+    <!-- Bootstrap 4 CSS -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    >
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand navbar-light bg-white border-bottom">
+        <div class="container">
+            <a class="navbar-brand font-weight-bold" href="index.html">
+                <span class="brand-mark">IMDB</span> Movies
+            </a>
+
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Movies</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Actors</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Producers</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Movie creation form -->
+    <main class="container form-page">
+
+        <div class="form-container">
+            <h1 class="page-title mb-4">Enter Movie Details</h1>
+
+            <form id="movie-form" novalidate>
+
+                <!-- Movie name -->
+                <div class="form-group">
+                    <label for="movie-name">Movie Name</label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="movie-name"
+                        name="movieName"
+                        placeholder="Enter movie name"
+                        required
+                        minlength="2"
+                    >
+
+                    <div class="invalid-feedback">
+                        Please enter a movie name (at least 2 characters).
+                    </div>
+                </div>
+
+                <!-- Release date -->
+                <div class="form-group">
+                    <label for="release-date">Year of Release</label>
+
+                    <input
+                        type="date"
+                        class="form-control"
+                        id="release-date"
+                        name="releaseDate"
+                        required
+                    >
+
+                    <div class="invalid-feedback">
+                        Please select the release date.
+                    </div>
+                </div>
+
+                <!-- Actors -->
+                <div class="form-group">
+                    <label for="actor">Actors</label>
+
+                    <div class="input-action-group">
+                        <select
+                            class="form-control"
+                            id="actor"
+                            name="actor"
+                            required
+                        >
+                            <option value="">Select an actor</option>
+                            <option value="1">Robert Downey Jr.</option>
+                            <option value="2">Leonardo DiCaprio</option>
+                            <option value="3">Scarlett Johansson</option>
+                            <option value="4">Tom Hanks</option>
+                        </select>
+
+                        <button
+                            type="button"
+                            class="btn btn-outline-secondary"
+                            data-toggle="modal"
+                            data-target="#actorModal"
+                        >
+                            Add Actor
+                        </button>
+
+                        <div class="invalid-feedback">
+                            Please select an actor.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Producer -->
+                <div class="form-group">
+                    <label for="producer">Producer</label>
+
+                    <div class="input-action-group">
+                        <select
+                            class="form-control"
+                            id="producer"
+                            name="producer"
+                            required
+                        >
+                            <option value="">Select a producer</option>
+                            <option value="1">Kevin Feige</option>
+                            <option value="2">Emma Thomas</option>
+                            <option value="3">Kathleen Kennedy</option>
+                            <option value="4">Frank Marshall</option>
+                        </select>
+
+                        <button
+                            type="button"
+                            class="btn btn-outline-secondary"
+                            data-toggle="modal"
+                            data-target="#producerModal"
+                        >
+                            Add Producer
+                        </button>
+
+                        <div class="invalid-feedback">
+                            Please select a producer.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Genre -->
+                <div class="form-group">
+                    <label for="genre">Genres</label>
+
+                    <select
+                        class="form-control"
+                        id="genre"
+                        name="genre"
+                        required
+                    >
+                        <option value="">Select a genre</option>
+                        <option value="Action">Action</option>
+                        <option value="Comedy">Comedy</option>
+                        <option value="Drama">Drama</option>
+                        <option value="Sci-Fi">Sci-Fi</option>
+                        <option value="Thriller">Thriller</option>
+                        <option value="Animation">Animation</option>
+                        <option value="Adventure">Adventure</option>
+                        <option value="Romance">Romance</option>
+                    </select>
+
+                    <div class="invalid-feedback">
+                        Please select a genre.
+                    </div>
+                </div>
+
+                <!-- Plot -->
+                <div class="form-group">
+                    <label for="plot">Plot</label>
+
+                    <textarea
+                        class="form-control"
+                        id="plot"
+                        name="plot"
+                        rows="4"
+                        placeholder="Describe the movie's story"
+                        required
+                        minlength="10"
+                    ></textarea>
+
+                    <div class="invalid-feedback">
+                        Please enter a plot of at least 10 characters.
+                    </div>
+                </div>
+
+                <!-- Poster upload -->
+                <div class="form-group">
+                    <label for="poster">Poster</label>
+
+                    <input
+                        type="file"
+                        class="form-control-file poster-input"
+                        id="poster"
+                        name="poster"
+                        accept="image/*"
+                        required
+                    >
+
+                    <div class="invalid-feedback">
+                        Please select a movie poster image.
+                    </div>
+                </div>
+
+                <!-- Submit and reset -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        Add Movie
+                    </button>
+
+                    <button type="reset" class="btn btn-light ml-2">
+                        Reset
+                    </button>
+                </div>
+
+                <div id="form-success" class="alert alert-success mt-3 d-none">
+                    Form validation successful! No movie has been saved.
+                </div>
+
+            </form>
+        </div>
+    </main>
+
+    <!-- Add Actor Modal -->
+    <div
+        class="modal fade"
+        id="actorModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="actorModalLabel"
+        aria-hidden="true"
+    >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="actorModalLabel">
+                        Add Actor
+                    </h5>
+
+                    <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                    >
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="actor-form" novalidate>
+
+                        <div class="form-group">
+                            <label for="actor-name">Actor Name</label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="actor-name"
+                                required
+                                minlength="2"
+                            >
+
+                            <div class="invalid-feedback">
+                                Please enter the actor's name.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="actor-dob">Date of Birth</label>
+
+                            <input
+                                type="date"
+                                class="form-control"
+                                id="actor-dob"
+                                required
+                            >
+
+                            <div class="invalid-feedback">
+                                Please select the actor's date of birth.
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            Add Actor
+                        </button>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Producer Modal -->
+    <div
+        class="modal fade"
+        id="producerModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="producerModalLabel"
+        aria-hidden="true"
+    >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="producerModalLabel">
+                        Add Producer
+                    </h5>
+
+                    <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                    >
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="producer-form" novalidate>
+
+                        <div class="form-group">
+                            <label for="producer-name">Producer Name</label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="producer-name"
+                                required
+                                minlength="2"
+                            >
+
+                            <div class="invalid-feedback">
+                                Please enter the producer's name.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="producer-dob">Date of Birth</label>
+
+                            <input
+                                type="date"
+                                class="form-control"
+                                id="producer-dob"
+                                required
+                            >
+
+                            <div class="invalid-feedback">
+                                Please select the producer's date of birth.
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            Add Producer
+                        </button>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Form validation -->
+    <script src="js/form.js"></script>
+
+</body>
+</html>

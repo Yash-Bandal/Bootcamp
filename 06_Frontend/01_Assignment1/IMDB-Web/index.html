@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>MovieHub | Movies</title>
+
+    <!-- Bootstrap 4 CSS -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    >
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand navbar-light bg-white border-bottom">
+        <div class="container">
+            <a class="navbar-brand font-weight-bold" href="index.html">
+                <span class="brand-mark">IMDB</span> Movies
+            </a>
+
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="index.html">Movies</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Actors</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Producers</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <main class="container movie-page">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="page-title mb-0">Movies</h1>
+
+            <a href="create-movie.html" class="btn btn-outline-primary">
+                Add Movie
+            </a>
+        </div>
+
+        <!-- JavaScript renders all movie cards here -->
+        <div class="row" id="movie-list"></div>
+
+    </main>
+
+    <!-- Explore Movie Modal -->
+    <div
+        class="modal fade"
+        id="movieModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="movieModalLabel"
+        aria-hidden="true"
+    >
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="movieModalLabel">
+                        Movie Details
+                    </h5>
+
+                    <button
+                        type="button"
+                        class="close"
+                        data-dismiss="modal"
+                        aria-label="Close"
+                    >
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row">
+
+                        <div class="col-md-4 mb-3">
+                            <img
+                                id="modal-poster"
+                                src=""
+                                alt="Movie poster"
+                                class="img-fluid rounded modal-poster"
+                            >
+                        </div>
+
+                        <div class="col-md-8">
+                            <h4 id="modal-title"></h4>
+
+                            <p class="text-muted">
+                                Release year:
+                                <span id="modal-year"></span>
+                            </p>
+
+                            <p>
+                                <strong>Director:</strong>
+                                <span id="modal-director"></span>
+                            </p>
+
+                            <p>
+                                <strong>Genre:</strong>
+                                <span id="modal-genre"></span>
+                            </p>
+
+                            <p>
+                                <strong>Cast:</strong>
+                                <span id="modal-cast"></span>
+                            </p>
+
+                            <p class="mb-1"><strong>Plot</strong></p>
+                            <p id="modal-plot"></p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-dismiss="modal"
+                    >
+                        Close
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- jQuery must load before Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+    <!-- Bootstrap bundle includes Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Movie listing logic -->
+    <script src="js/movies.js"></script>
+
+</body>
+</html>
