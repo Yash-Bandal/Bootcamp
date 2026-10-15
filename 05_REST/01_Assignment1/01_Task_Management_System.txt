@@ -1,0 +1,306 @@
+Question 1:
+Design a RESTful API for a Task Management System 
+
+1. Endpoints for registering users, updating their profiles, and managing authentication (e.g., login, logout).
+
+Controller - UsersController
+
+A. Register User
+
+> Method and Endpoin : POST /api/auth 
+> Method and Endpoint : POST /api/users
+
+> Request Body
+{
+"name" : "Yash",
+"email" : "yb@gdeltax.com",
+"password" : "strongP"
+}
+
+> Response Status Code : 201 Created
+
+Reason - 
+ POST /api/auth - Used when, user is added directly at Register time
+ POST /api/users - Used when, example, a admin wants to add a complete new user, with all details
+
+
+
+B. Update Profiles
+
+> Method and Endpoint : PATCH /api/users/{userId}
+
+> Request Body
+{
+"name" : "Yash Bandal",
+"email" : "yb@gdeltax.com",
+}
+
+> Response Status Code : 200 Ok
+
+Description - Here, we are just updating the name and email of the Profile, 
+not the entire Profile resource, thus PATCH is used for updation.
+
+PUT will be appropriate when the complete resource is being replaced/updated.
+
+C. Manage Authenticaion
+
+C.1
+Login
+
+> Method and Endpoint : POST /api/auth/login
+
+> Request Body
+{
+"email" : "yb@gdeltax.com",
+"password" : "strongP"
+}
+
+> Response Body
+{
+"token" : "JWT_Token"
+}
+
+> Response Status Code : 200 OK
+
+C.2
+Logout
+
+> Method and Endpoint : POST /api/auth/logout
+
+> Request Body : No body
+
+> Response Status Code : 204 No Content
+
+
+------------------------------------------------------------------------------------------------
+
+
+2. Endpoints to create, retrieve, update, and delete tasks
+
+Controller - TasksController
+
+A. Create Task
+
+> Method and Endpoint : POST /api/tasks
+
+> Request Body
+{
+"title" : "REST-Assignment-1",
+"description" : "Perform API Design Task",
+"status" : "pending",
+"priority" : "high",
+"dueDate" : "2026-09-25",
+}
+
+> Response Status Code : 201 Created
+
+
+B. Retrieve Task
+
+> Method and Endpoint :
+ GET /api/tasks
+ GET /api/tasks/{taskId}   <- Get task by Id
+
+> Request Body : No Body
+
+> Response Status Code : 200 Ok
+
+
+C. Update Task
+
+> Method and Endpoint : PATCH /api/tasks/{taskId} 
+
+> Request Body : 
+{
+"status" : "completed",
+"priority" : "high"
+}
+
+> Response Status Code : 200 Ok
+
+PUT - Method that is used when we want to update the entire 
+column/all attributes of a resource.
+PATCH - Method that is used when we want to update a specific cell/field of a column/attribute
+without replacing a complete resource.
+
+D. Delete Task
+
+> Method and Endpoint : DELETE /api/tasks/{taskId} 
+
+> Request Body : No Body
+
+> Response Status Code : 204 No Content
+
+
+------------------------------------------------------------------------------------------------
+
+
+3. Support filtering tasks by status, priority, and due date using query parameters.
+
+Controller - TasksController
+
+> Method and Endpoint : GET /api/tasks?status=pending&priority=high&dueDate=2026-09-25
+
+> Request Body : No Body
+
+> Response Status Code : 200 Ok
+
+
+------------------------------------------------------------------------------------------------
+
+
+4. Endpoints to allow users to retrieve tasks in pages and 
+should  allow users to sort tasks by different fields like due_date, priority, and status
+
+Controller - TasksController
+
+> Method and Endpoint : 
+
+By priority - GET /api/tasks?page=2&size=10&sortBy=priority&sortOrder=asc
+By dueDate - GET /api/tasks?page=2&size=10&sortBy=dueDate&sortOrder=asc
+By status - GET /api/tasks?page=2&size=10&sortBy=status&sortOrder=asc
+Combined - GET /api/tasks?page=2&size=10&sortBy=dueDate&sortOrder=asc&status=pending&priority=high
+
+
+> Request Body : No Body
+
+> Response Status Code : 200 Ok
+
+------------------------------------------------------------------------------------------------
+
+
+5 Endpoints to manage projects and associate tasks with specific projects 
+(Create a project and Retrieve all tasks associated with a specific project.)
+
+A. Create Project
+
+Controller - ProjectsController
+
+> Method and Endpoint : POST /api/projects
+
+> Request Body :
+{
+"title" : "REST-Project-1",
+"description" : "API Designs"
+}
+
+> Response Status Code : 201 Created
+
+
+B. Retrieve all tasks of a specific project
+
+Controller - TasksController
+
+> Method and Endpoint : GET /api/projects/{projectId}/tasks
+
+> Request Body : No Body
+
+> Response Status Code : 200 Ok
+
+Controller - TasksController
+Reason - Tasks are the resources that are being retrieved under a specific project,
+projectId gives the context of the Parent resource - Project
+
+------------------------------------------------------------------------------------------------
+
+
+6. Nested routes to handle subtasks under specific tasks.
+(Create a subtask, Retrieve all subtasks for a task.)
+
+Controller - SubtasksController
+
+A. Create a subtask
+
+> Method and Endpoint : POST /api/tasks/{taskId}/subtasks
+
+> Request Body : 
+{
+"title" : "Subtask-1",
+"description" : "Handle user auth requests"
+}
+
+> Response Status Code : 201 Created
+
+
+B. Retrieve a subtask
+
+> Method and Endpoint : GET /api/tasks/{taskId}/subtasks/{subtaskId}
+
+> Request Body : No Body
+
+> Response Status Code : 200 Ok
+
+------------------------------------------------------------------------------------------------
+
+
+7. Endpoints to allow users to comment on tasks, with routes nested under tasks.
+
+
+Controller - CommentsController
+
+Reason - Comments is a child resource of a Task,
+if we would have had a case where we would have passed
+Comment as a seperate attribute inside Task Body
+like
+{
+    "taskId" : 1,
+    "name" : "Update Auth",
+    "comment" : "Update the current task"
+}
+Then it would be a TasksController
+
+
+> Method and Endpoint : POST /api/tasks/{taskId}/comments
+
+> Request Body : 
+{
+"comment" : "Use JWT Auth"
+}
+
+> Response Status Code : 201 Created
+
+------------------------------------------------------------------------------------------------
+
+
+8. Endpoints to retrieve tasks assigned to a specific user.
+
+Controller - TasksController
+
+> Method and Endpoint : GET /api/users/{userId}/tasks
+
+> Request Body : No Body
+
+> Response Status Code : 200 Ok
+
+------------------------------------------------------------------------------------------------
+
+
+9. Endpoints to mark tasks as completed, in-progress, or pending.
+
+Controller - TasksController
+
+> Method and Endpoint : PATCH /api/tasks/{taskId}/status
+
+> Request Body : 
+{
+"status" : "completed",
+}
+
+Status Type : Enum
+
+Allowed Values :
+
+enum TaskStatus
+{
+    completed,
+    InProgress,
+    pending
+}
+
+
+> Response Status Code : 200 Ok
+
+------------------------------------------------------------------------------------------------
+
+
+
