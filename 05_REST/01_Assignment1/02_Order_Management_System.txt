@@ -1,0 +1,188 @@
+
+Question 2:
+
+Given the endpoints(Order Management) identify and justify why it will come under a certain controller.
+
+1. POST /v1/orders
+
+Controller - OrdersController
+
+Reason - Here the primary resource being managed is 'Order' and
+the endpoint is associated with creating a new order,
+thats why it belongs to OrdersController
+
+
+
+2. GET /v1/products/{productId}
+
+Controller - ProductsController
+
+Reason - The main source here is a product and
+the endpoint is associated with retrieving a specific product
+thats why it belongs to ProductsController
+
+
+
+3. POST /v1/carts/{cartId}/items
+
+Controller - ItemsController
+
+Reason - We use **ItemsController instead of CartItemsController** because 
+`CartItem` is a junction/relationship table that connects a Cart with an Item; 
+it is not treated as an independent resource in our API. The `cartId` provides
+ the context of the parent Cart, while `items` represents the resource being 
+ managed within that Cart. 
+
+ Think of using GetCartItems() inside ItemController
+
+
+4. POST /v1/users
+
+Controller - UsersController
+
+Reason - Here the main resource is users and
+the endpoint is associated with adding a new User.
+Hence the operation belong to UsersController
+
+
+
+5. POST /v1/payments
+
+Controller - PaymentsController
+
+Reason - In this case the main resource is Payments and
+the endpoint is associated with making a new Payment.
+Hence the operation belong to PaymentsController
+
+
+
+6. GET /v1/categories
+
+Controller - CategoriesController
+
+Reason - Here the main resource is Categories of products and
+the endpoint is associated with retrieving all Categories.
+Thus the operation belong to CategoriesController
+
+
+
+7. POST /v1/products/{productId}/reviews
+
+Controller - ReviewsController
+
+Reason - Reviews is a nested child resource of Products,
+and the endpoint is associated with creating a new review on a specific product.
+Thus the operation belong to ReviewsController
+
+
+
+8. PUT /v1/orders/{orderId}
+
+Controller - OrdersController
+
+Reason - Order is the main resource here,
+and the endpoint is associated with updating a complete order.
+Thus the operation belong to OrdersController.
+
+
+
+9. POST /v1/users/{userId}/addresses
+
+Controller - AddressesController
+
+Reason :
+Using a UsersController : 
+
+In a simple 1:1 relationship, 
+if the address is treated as part of the User resource:
+
+PUT /api/users/10
+{
+  "name": "Yash",
+  "address": {
+    "city": "Pune",
+    "pincode": "411001"
+  }
+}
+
+Here, we're primarily updating the User, so UsersController will be used
+
+For M:M
+
+If users can have multiple addresses 
+and/or an address can be associated with multiple users, 
+the address relationship becomes its own collection/resource, so:
+
+POST /v1/users/{userId}/addresses
+
+→ AddressesController
+
+
+10. POST /v1/auth/login
+
+Controller - AuthController
+
+Reason - This endpoint handles authentication and login functionality
+Since it is associated authentication logic,
+it should be placed in AuthController.
+
+ 
+
+11. PATCH /v1/orders/{orderId}/status
+
+Controller - OrdersController
+
+Reason - status is a sub-resource/part of the Order being updated,
+and the primary resource is Order.
+Therefore, it belongs to OrdersController.
+
+We use OrdersController, 
+because Status is the property being operated as a resource
+
+We will not use StatusController,
+because we are not operating on Status as a Entity
+Not, PATCH /v1/status
+we use StatusController, only when we will be updating Status value inside Status table seperately
+
+
+12. PUT /v1/users/{userId}
+
+Controller - UsersController
+
+Reason - The endpoint is associated with updating a existing User.
+Here Users are main resource
+Hence the operation belong to UsersController
+
+
+
+13. GET /v1/products/{productId}/discounts
+
+Controller - ProductsController
+
+Reason - Discounts is a nested child resource of Products,
+and the endpoint is associated with retrieving discounts
+for a specific product.
+Thus the operation belongs to ProductsController. 
+
+
+
+14. GET /v1/products/{productId}/availability
+
+Controller - ProductsController
+
+The primary resource is Product, and the endpoint is
+associated with retrieving the availability of a specific product.
+Thus the operation belongs to ProductsController.
+
+
+
+15. GET /v1/users/{userId}/orders
+
+Controller - OrdersController
+
+It Answers the Requirement - Get the 'Orders' belonging to this particular user
+Reason - Orders is a nested child resource of Users, and the endpoint
+is associated with retrieving orders belonging to a specific user.
+Thus the operation belongs to OrdersController.
+
+
