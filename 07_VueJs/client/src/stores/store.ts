@@ -1,4 +1,3 @@
-
 import { defineStore } from 'pinia'
 
 // Services
@@ -27,32 +26,41 @@ import type {
 import type { Genre } from '../types/genre'
 
 export const useAppStore = defineStore('app', {
-  state: () => ({
-    movies: [] as Movie[],
-    currentMovie: null as Movie | null,
+state: () => ({
+  movies: [] as Movie[],
+  currentMovie: null as Movie | null,
 
-    actors: [] as Person[],
-    producers: [] as Person[],
-    genres: [] as Genre[],
+  actors: [] as Person[],
+  producers: [] as Person[],
+  genres: [] as Genre[],
 
-    loadingMovies: false,
-    loadingPeople: false,
-    loadingGenres: false,
-    savingMovie: false,
+  // Track whether data has been fetched
+  moviesLoaded: false,
+  peopleLoaded: false,
+  genresLoaded: false,
 
-    error: '',
-  }),
+  loadingMovies: false,
+  loadingPeople: false,
+  loadingGenres: false,
+  savingMovie: false,
+
+  error: '',
+}),
 
   getters: {},
 
   actions: {
     // Fetch all movies
     async fetchMovies() {
+      // Don't make another API call if data is already loaded
+      if (this.moviesLoaded) return
+
       this.loadingMovies = true
       this.error = ''
 
       try {
         this.movies = await getMovies()
+        this.moviesLoaded = true
       } catch (err) {
         this.error = getErrorMessage(err, 'Failed to fetch movies.')
         throw err
@@ -80,7 +88,12 @@ export const useAppStore = defineStore('app', {
       this.error = ''
 
       try {
-        return await createMovie(request)
+        const response = await createMovie(request)
+
+        // Movie list is now outdated
+        this.moviesLoaded = false
+
+        return response
       } catch (err) {
         this.error = getErrorMessage(err, 'Failed to create movie.')
         throw err
@@ -96,6 +109,9 @@ export const useAppStore = defineStore('app', {
 
       try {
         await updateMovie(id, request)
+
+        // Movie list is now outdated
+        this.moviesLoaded = false
       } catch (err) {
         this.error = getErrorMessage(err, 'Failed to update movie.')
         throw err
@@ -119,6 +135,8 @@ export const useAppStore = defineStore('app', {
 
     // Fetch actors and producers
     async fetchPeople() {
+      if (this.peopleLoaded) return
+
       this.loadingPeople = true
       this.error = ''
 
@@ -130,6 +148,7 @@ export const useAppStore = defineStore('app', {
 
         this.actors = actors
         this.producers = producers
+        this.peopleLoaded = true
       } catch (err) {
         this.error = getErrorMessage(err, 'Failed to fetch people.')
         throw err
@@ -144,7 +163,10 @@ export const useAppStore = defineStore('app', {
 
       try {
         const response = await createActor(request)
+
+        this.peopleLoaded = false
         await this.fetchPeople()
+
         return response
       } catch (err) {
         this.error = getErrorMessage(err, 'Failed to create actor.')
@@ -158,7 +180,11 @@ export const useAppStore = defineStore('app', {
 
       try {
         const response = await createProducer(request)
+
+        // Refresh actors and producers to include the new producer
+        this.peopleLoaded = false
         await this.fetchPeople()
+
         return response
       } catch (err) {
         this.error = getErrorMessage(err, 'Failed to create producer.')
@@ -168,11 +194,14 @@ export const useAppStore = defineStore('app', {
 
     // Fetch genres
     async fetchGenres() {
+      if (this.genresLoaded) return
+
       this.loadingGenres = true
       this.error = ''
 
       try {
         this.genres = await getGenres()
+        this.genresLoaded = true
       } catch (err) {
         this.error = getErrorMessage(err, 'Failed to fetch genres.')
         throw err

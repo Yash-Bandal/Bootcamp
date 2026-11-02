@@ -1,4 +1,3 @@
-
 <template>
 <v-container fluid class="movies-container">
     <div class="d-flex flex-wrap align-center justify-space-between ga-3">
@@ -12,9 +11,9 @@
       </div>
     </v-alert>
 
-    <div v-else-if="loadingMovies" class="d-flex justify-center py-12">
-      <v-progress-circular indeterminate color="primary" />
-    </div>
+<div v-else-if="loadingMovies" class="d-flex justify-center py-12">
+  <LoadingMovies />
+</div>
 
     <v-alert v-else-if="movies.length === 0" type="info" variant="tonal">
       No movies found.
@@ -54,6 +53,9 @@ import type { Movie } from '../types/movie'
 import MovieDetailModal from '../components/movies/MovieDetailModal.vue'
 import MovieCard from '../components/movies/MovieCard.vue'
 import Swal from 'sweetalert2'
+// import LoadingMovies from '../components/shared/LoadingSpinner.vue'
+import LoadingMovies from '../components/shared/LoadingMovies.vue'
+import LoadingSpinner from '../components/shared/LoadingSpinner.vue'
 
 const store = useAppStore()
 const router = useRouter()
@@ -83,24 +85,28 @@ async function confirmDelete(movie: Movie) {
     cancelButtonColor: '#6c757d',
     confirmButtonText: 'Yes, delete it',
     cancelButtonText: 'Cancel',
+    showLoaderOnConfirm: true,
+
+    preConfirm: async () => {
+      try {
+        await store.deleteMovie(movie.id)
+      } catch {
+        Swal.showValidationMessage(
+          'Unable to delete the movie. Please try again.'
+        )
+        return false
+      }
+    },
+
+    allowOutsideClick: () => !Swal.isLoading(),
   })
 
-  if (!result.isConfirmed) return
-
-  try {
-    await store.deleteMovie(movie.id)
-
+  if (result.isConfirmed) {
     await Swal.fire({
       title: 'Deleted!',
       text: 'The movie has been deleted.',
       icon: 'success',
       confirmButtonColor: '#3085d6',
-    })
-  } catch {
-    await Swal.fire({
-      title: 'Error!',
-      text: 'Unable to delete the movie. Please try again.',
-      icon: 'error',
     })
   }
 }
