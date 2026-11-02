@@ -166,7 +166,7 @@ async function handleSave() {
   </v-alert>
 </v-card-text>
 
-        <v-card-actions>
+        <v-card-actions class="px-6 pb-5 pt-2">
           <v-spacer />
 
           <v-btn
