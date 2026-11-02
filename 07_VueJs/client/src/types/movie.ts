@@ -17,7 +17,7 @@ export interface MovieRequest {
   yearOfRelease: number
   plot: string
   coverImage: string
-  producerId: number
+  producerId: number | null
   actorIds: number[]
   genreIds: number[]
 }

@@ -1,5 +1,3 @@
-
-
 <template>
   <v-container fluid class="movie-form-container">
 
@@ -24,7 +22,19 @@
     </v-alert>
 
     <!-- Movie Form -->
-    <v-card class="form-card" variant="flat">
+     <!-- Form Loading -->
+      <div
+        v-if="loadingForm"
+        class="d-flex justify-center align-center py-10"
+      >
+        <LoadingSpinner/>
+      </div>
+
+      <v-card
+        v-else
+        class="form-card"
+        variant="flat"
+      >
 
       <v-card-text class="pa-0">
         <v-form @submit.prevent="handleSubmit">
@@ -166,17 +176,20 @@
                 </span>
               </div>
 
-              <v-file-input
-                v-model="posterFile"
-                label="Choose poster image"
+              <input
+                type="file"
                 accept="image/*"
-                prepend-icon="mdi-image-outline"
-                variant="outlined"
-                density="comfortable"
-                show-size
-                clearable
+                class="poster-file-input"
                 :disabled="saving"
+                @change="handlePosterChange"
               />
+
+              <div
+                v-if="posterError"
+                class="text-error text-caption mt-1"
+              >
+                {{ posterError }}
+              </div>
 
               <v-img
                 v-if="posterPreview"
@@ -239,6 +252,7 @@ import { uploadMoviePoster } from '../services/movieService'
 import type { MovieRequest } from '../types/movie'
 
 import PersonFormDialog from '../components/shared/PersonFormDialog.vue'
+import LoadingSpinner from '../components/shared/LoadingSpinner.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -249,37 +263,55 @@ const {
   producers,
   genres,
   error,
-  savingMovie,
 } = storeToRefs(store)
 
 const isEditMode = computed(() => route.params.id !== undefined)
 
 const saving = ref(false)
+const loadingForm = ref(true)
 
 const showPersonDialog = ref(false)
 const personDialogType = ref<'actor' | 'producer'>('actor')
 
 const posterFile = ref<File | null>(null)
 const posterPreview = ref('')
+const posterError = ref('')
 
 const form = ref<MovieRequest>({
   name: '',
   yearOfRelease: new Date().getFullYear(),
   plot: '',
   coverImage: '',
-  producerId: 0,
+  // producerId: 0,
+  producerId: null as number | null,
   actorIds: [],
   genreIds: [],
 })
 
 watch(posterFile, (file) => {
+  // Clean up the previous preview URL
   if (posterPreview.value.startsWith('blob:')) {
     URL.revokeObjectURL(posterPreview.value)
   }
 
-  posterPreview.value = file
-    ? URL.createObjectURL(file)
-    : ''
+  posterPreview.value = ''
+
+  // No file selected
+  if (!file) return
+
+  // Validate file type
+  if (!file.type.startsWith('image/')) {
+    posterError.value =
+      'Invalid file. Please select an image (JPG, PNG, GIF, WEBP, etc.).'
+
+    // Reject the invalid file
+    posterFile.value = null
+    return
+  }
+
+  // Valid image selected
+  posterError.value = ''
+  posterPreview.value = URL.createObjectURL(file)
 })
 
 onUnmounted(() => {
@@ -289,6 +321,8 @@ onUnmounted(() => {
 })
 
 onMounted(async () => {
+  loadingForm.value = true
+
   try {
     await Promise.all([
       store.fetchPeople(),
@@ -309,7 +343,7 @@ onMounted(async () => {
         yearOfRelease: movie.yearOfRelease,
         plot: movie.plot ?? '',
         coverImage: movie.coverImage ?? '',
-        producerId: movie.producer?.id ?? 0,
+        producerId: movie.producer?.id ?? null,
         actorIds: movie.actors.map(actor => actor.id),
         genreIds: movie.genres.map(genre => genre.id),
       }
@@ -319,6 +353,8 @@ onMounted(async () => {
   } catch (err) {
     error.value =
       err instanceof Error ? err.message : 'Failed to load movie form data.'
+  } finally {
+    loadingForm.value = false
   }
 })
 
@@ -345,6 +381,29 @@ function getValidMovieId(): number | null {
   }
 
   return id
+}
+
+function handlePosterChange(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0] ?? null
+
+  posterError.value = ''
+
+  if (!file) {
+    posterFile.value = null
+    return
+  }
+
+  if (!file.type.startsWith('image/')) {
+    posterError.value = 'Please select a valid image file.'
+    posterFile.value = null
+
+    // Clear the invalid selection from the input
+    input.value = ''
+    return
+  }
+
+  posterFile.value = file
 }
 
 async function handleSubmit() {
@@ -454,6 +513,13 @@ async function handleSubmit() {
   letter-spacing: 0;
 }
 
+.poster-file-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #bdbdbd;
+  border-radius: 6px;
+  font-size: 14px;
+}
 
 /* Tablet */
 @media (max-width: 960px) {

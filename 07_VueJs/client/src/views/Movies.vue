@@ -11,9 +11,9 @@
       </div>
     </v-alert>
 
-<div v-else-if="loadingMovies" class="d-flex justify-center py-12">
-  <LoadingMovies />
-</div>
+  <div v-else-if="loadingMovies" class="d-flex justify-center py-12">
+    <LoadingMovies />
+  </div>
 
     <v-alert v-else-if="movies.length === 0" type="info" variant="tonal">
       No movies found.

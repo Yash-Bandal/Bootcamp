@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useAppStore } from '../../stores/store'
@@ -27,6 +26,13 @@ const loading = ref(false)
 const error = ref('')
 
 const dialogTitle = ref('')
+const personForm = ref()
+
+const requiredRule = (value: string) =>
+  !!value?.trim() || 'This field is required.'
+
+const dateRule = (value: string) =>
+  !!value || 'Date of birth is required.'
 
 watch(
   () => props.type,
@@ -58,25 +64,10 @@ function closeDialog() {
 async function handleSave() {
   error.value = ''
 
-  if (!name.value.trim()) {
-    error.value = 'Name is required.'
-    return
-  }
+  // Validate all fields together
+  const { valid } = await personForm.value.validate()
 
-  if (!bio.value.trim()) {
-    error.value = 'Biography is required.'
-    return
-  }
-
-  if (!dob.value) {
-    error.value = 'Date of birth is required.'
-    return
-  }
-
-  if (!gender.value) {
-    error.value = 'Please select a gender.'
-    return
-  }
+  if (!valid) return
 
   const request: PersonRequest = {
     name: name.value.trim(),
@@ -109,79 +100,95 @@ async function handleSave() {
 }
 </script>
 
+
 <template>
   <v-dialog
     :model-value="modelValue"
     max-width="500"
-    :persistent="loading"
+    persistent
     @update:model-value="emit('update:modelValue', $event)"
   >
     <v-card rounded="lg">
       <v-card-title>{{ dialogTitle }}</v-card-title>
 
-      <v-card-text>
-        <v-text-field
-          v-model="name"
-          label="Name"
-          placeholder="Enter name"
-          variant="outlined"
-          :error-messages="error === 'Name is required.' ? error : []"
-          autofocus
-        />
+      <!-- Wrap all input fields inside v-form -->
+      <v-form ref="personForm" @submit.prevent="handleSave">
+      <v-card-text class="pa-6">
+        <div class="d-flex flex-column ga-4">
 
-        <v-textarea
-          v-model="bio"
-          label="Biography"
-          placeholder="Enter biography"
-          variant="outlined"
-          rows="3"
-        />
+          <v-text-field
+            v-model="name"
+            label="Name"
+            placeholder="Enter name"
+            variant="outlined"
+            :rules="[requiredRule]"
+            autofocus
+            hide-details="auto"
+          />
 
-        <v-text-field
-          v-model="dob"
-          label="Date of Birth"
-          type="date"
-          variant="outlined"
-        />
+    <v-textarea
+      v-model="bio"
+      label="Biography"
+      placeholder="Enter biography"
+      variant="outlined"
+      rows="3"
+      :rules="[requiredRule]"
+      hide-details="auto"
+    />
 
-        <v-select
-          v-model="gender"
-          label="Gender"
-          :items="['Male', 'Female', 'Other']"
-          variant="outlined"
-        />
+    <v-text-field
+      v-model="dob"
+      label="Date of Birth"
+      type="date"
+      variant="outlined"
+      :rules="[dateRule]"
+      hide-details="auto"
+    />
 
-        <v-alert
-          v-if="error && error !== 'Name is required.'"
-          type="error"
-          variant="tonal"
-          class="mt-2"
-        >
-          {{ error }}
-        </v-alert>
-      </v-card-text>
+    <v-select
+      v-model="gender"
+      label="Gender"
+      :items="['Male', 'Female', 'Other']"
+      variant="outlined"
+      :rules="[requiredRule]"
+      hide-details="auto"
+    />
 
-      <v-card-actions>
-        <v-spacer />
+  </div>
 
-        <v-btn
-          variant="text"
-          :disabled="loading"
-          @click="closeDialog"
-        >
-          Cancel
-        </v-btn>
+  <v-alert
+    v-if="error"
+    type="error"
+    variant="tonal"
+    class="mt-4"
+  >
+    {{ error }}
+  </v-alert>
+</v-card-text>
 
-        <v-btn
-          color="primary"
-          variant="flat"
-          :loading="loading"
-          :disabled="loading"
-          @click="handleSave"
-        >
-          Save
-        </v-btn>
-      </v-card-actions>
+        <v-card-actions>
+          <v-spacer />
+
+          <v-btn
+            variant="text"
+            :disabled="loading"
+            @click="closeDialog"
+          >
+            Cancel
+          </v-btn>
+
+          <v-btn
+            color="primary"
+            variant="flat"
+            :loading="loading"
+            :disabled="loading"
+            type="submit"
+          >
+            Save
+          </v-btn>
+        </v-card-actions>
+      </v-form>
     </v-card>
   </v-dialog>
 </template>
+
