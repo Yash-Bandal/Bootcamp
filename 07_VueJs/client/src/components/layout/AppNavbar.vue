@@ -1,4 +1,3 @@
-
 <template>
   <v-app-bar
     color="white"
@@ -44,7 +43,8 @@ import { RouterLink } from 'vue-router'
   border-bottom: 2px solid #eeeeee;
 }
 .navbar-container {
-  max-width: 1180px;
+  /* max-width: 1180px; */
+  max-width: 1400px;
   margin: 0 auto;
   padding-left: 32px;
   padding-right: 32px;

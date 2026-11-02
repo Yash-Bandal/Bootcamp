@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { useAppStore } from '../../stores/store'
-import type { PersonRequest } from '../../types/person'
+import {
+  useActorStore,
+  useProducerStore,
+} from '../../stores'
+import type { PersonRequest } from '../../types'
 
 interface Props {
   modelValue: boolean
@@ -15,7 +18,8 @@ const emit = defineEmits<{
   (event: 'saved', personId: number): void
 }>()
 
-const store = useAppStore()
+const actorStore = useActorStore()
+const producerStore = useProducerStore()
 
 const name = ref('')
 const bio = ref('')
@@ -82,10 +86,10 @@ async function handleSave() {
     let personId: number
 
     if (props.type === 'actor') {
-      const response = await store.addActor(request)
+      const response = await actorStore.addActor(request)
       personId = response.id
     } else {
-      const response = await store.addProducer(request)
+      const response = await producerStore.addProducer(request)
       personId = response.id
     }
 
@@ -126,45 +130,44 @@ async function handleSave() {
             hide-details="auto"
           />
 
-    <v-textarea
-      v-model="bio"
-      label="Biography"
-      placeholder="Enter biography"
-      variant="outlined"
-      rows="3"
-      :rules="[requiredRule]"
-      hide-details="auto"
-    />
+          <v-textarea
+            v-model="bio"
+            label="Biography"
+            placeholder="Enter biography"
+            variant="outlined"
+            rows="3"
+            :rules="[requiredRule]"
+            hide-details="auto"
+          />
 
-    <v-text-field
-      v-model="dob"
-      label="Date of Birth"
-      type="date"
-      variant="outlined"
-      :rules="[dateRule]"
-      hide-details="auto"
-    />
+          <v-text-field
+            v-model="dob"
+            label="Date of Birth"
+            type="date"
+            variant="outlined"
+            :rules="[dateRule]"
+            hide-details="auto"
+          />
 
-    <v-select
-      v-model="gender"
-      label="Gender"
-      :items="['Male', 'Female', 'Other']"
-      variant="outlined"
-      :rules="[requiredRule]"
-      hide-details="auto"
-    />
+          <v-select
+            v-model="gender"
+            label="Gender"
+            :items="['Male', 'Female', 'Other']"
+            variant="outlined"
+            :rules="[requiredRule]"
+            hide-details="auto"
+          />
+        </div>
 
-  </div>
-
-  <v-alert
-    v-if="error"
-    type="error"
-    variant="tonal"
-    class="mt-4"
-  >
-    {{ error }}
-  </v-alert>
-</v-card-text>
+          <v-alert
+            v-if="error"
+            type="error"
+            variant="tonal"
+            class="mt-4"
+          >
+            {{ error }}
+          </v-alert>
+        </v-card-text>
 
         <v-card-actions class="px-6 pb-5 pt-2">
           <v-spacer />

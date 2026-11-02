@@ -1,6 +1,6 @@
 
 <script setup lang="ts">
-import type { Movie } from '../../types/movie'
+import type { Movie } from '../../types'
 
 interface Props {
   modelValue: boolean

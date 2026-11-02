@@ -6,8 +6,7 @@ import {
   apiUpload,
 } from './api'
 
-import type { ApiResponse } from '../types/api'
-import type { Movie, MovieRequest } from '../types/movie'
+import type { ApiResponse, Movie, MovieRequest } from '../../types'
 
 // Get all movies
 export async function getMovies(): Promise<Movie[]> {
@@ -27,10 +26,7 @@ export async function createMovie(movie: MovieRequest): Promise<unknown> {
 }
 
 // Update movie
-export async function updateMovie(
-  id: number,
-  movie: MovieRequest,
-): Promise<void> {
+export async function updateMovie(id: number, movie: MovieRequest, ): Promise<void> {
   await apiPut<void>(`/movies/${id}`, movie)
 }
 
@@ -40,10 +36,7 @@ export async function deleteMovie(id: number): Promise<void> {
 }
 
 // Upload or replace movie poster
-export async function uploadMoviePoster(
-  movieId: number,
-  file: File,
-): Promise<unknown> {
+export async function uploadMoviePoster(movieId: number, file: File, ): Promise<unknown> {
   const formData = new FormData()
   formData.append('file', file)
 

@@ -1,4 +1,3 @@
-
 import axios, { type AxiosError } from 'axios'
 
 const api = axios.create({
@@ -64,10 +63,8 @@ api.interceptors.response.use(
 )
 
 // Helper for displaying consistent error messages
-export function getErrorMessage(
-  error: unknown,
-  fallback = 'Something went wrong.',
-): string {
+export function getErrorMessage(error: unknown, fallback = 'Something went wrong.', ): string 
+{
   if (error instanceof ApiError) {
     return error.message
   }
@@ -80,39 +77,35 @@ export function getErrorMessage(
 }
 
 // GET
-export async function apiGet<T>(endpoint: string): Promise<T> {
+export async function apiGet<T>(endpoint: string): Promise<T> 
+{
   const response = await api.get<T>(endpoint)
   return response.data
 }
 
 // POST
-export async function apiPost<T>(
-  endpoint: string,
-  body: unknown,
-): Promise<T> {
+export async function apiPost<T>(endpoint: string, body: unknown, ): Promise<T> 
+{
   const response = await api.post<T>(endpoint, body)
   return response.data
 }
 
 // PUT
-export async function apiPut<T>(
-  endpoint: string,
-  body: unknown,
-): Promise<T> {
+export async function apiPut<T>(endpoint: string, body: unknown, ): Promise<T> 
+{
   const response = await api.put<T>(endpoint, body)
   return response.data
 }
 
 // DELETE
-export async function apiDelete(endpoint: string): Promise<void> {
+export async function apiDelete(endpoint: string): Promise<void> 
+{
   await api.delete(endpoint)
 }
 
 // File upload
-export async function apiUpload<T>(
-  endpoint: string,
-  formData: FormData,
-): Promise<T> {
+export async function apiUpload<T>(endpoint: string, formData: FormData, ): Promise<T> 
+{
   const response = await api.put<T>(endpoint, formData, {
     headers: {
       'Content-Type': undefined,

@@ -245,25 +245,34 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
+import {
+  useMovieStore,
+  useActorStore,
+  useProducerStore,
+  useGenreStore,
+} from '../stores'
 
-import { useAppStore } from '../stores/store'
-import { uploadMoviePoster } from '../services/movieService'
+import { uploadMoviePoster } from '../services'
 
-import type { MovieRequest } from '../types/movie'
+import type { MovieRequest } from '../types'
 
 import PersonFormDialog from '../components/shared/PersonFormDialog.vue'
 import LoadingSpinner from '../components/shared/LoadingSpinner.vue'
 
 const route = useRoute()
 const router = useRouter()
-const store = useAppStore()
 
-const {
-  actors,
-  producers,
-  genres,
-  error,
-} = storeToRefs(store)
+// Stores
+const movieStore = useMovieStore()
+const actorStore = useActorStore()
+const producerStore = useProducerStore()
+const genreStore = useGenreStore()
+
+// Store State
+const { actors } = storeToRefs(actorStore)
+const { producers } = storeToRefs(producerStore)
+const { genres } = storeToRefs(genreStore)
+const { error } = storeToRefs(movieStore)
 
 const isEditMode = computed(() => route.params.id !== undefined)
 
@@ -282,7 +291,6 @@ const form = ref<MovieRequest>({
   yearOfRelease: new Date().getFullYear(),
   plot: '',
   coverImage: '',
-  // producerId: 0,
   producerId: null as number | null,
   actorIds: [],
   genreIds: [],
@@ -325,8 +333,9 @@ onMounted(async () => {
 
   try {
     await Promise.all([
-      store.fetchPeople(),
-      store.fetchGenres(),
+      actorStore.fetchActors(),
+      producerStore.fetchProducers(),
+      genreStore.fetchGenres(),
     ])
 
     if (isEditMode.value) {
@@ -336,7 +345,7 @@ onMounted(async () => {
         throw new Error('Invalid movie ID in URL.')
       }
 
-      const movie = await store.fetchMovieById(movieId)
+      const movie = await movieStore.fetchMovieById(movieId)
 
       form.value = {
         name: movie.name,
@@ -447,13 +456,13 @@ async function handleSubmit() {
         throw new Error('Invalid movie ID in URL.')
       }
 
-      await store.editMovie(movieId, form.value)
+      await movieStore.editMovie(movieId, form.value)
 
       if (posterFile.value) {
         await uploadMoviePoster(movieId, posterFile.value)
       }
     } else {
-      const createdMovie = await store.addMovie(form.value)
+      const createdMovie = await movieStore.addMovie(form.value)
 
       if (posterFile.value) {
         const result = createdMovie as {
