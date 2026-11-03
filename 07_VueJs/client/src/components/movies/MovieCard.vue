@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import type { Movie } from '../../types'
 
@@ -11,6 +10,7 @@ const emit = defineEmits<{
   (event: 'delete', movie: Movie): void
   (event: 'view', movie: Movie): void
 }>()
+
 </script>
 
 <template>

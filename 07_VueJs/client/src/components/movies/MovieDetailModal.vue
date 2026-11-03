@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import type { Movie } from '../../types'
 
@@ -9,20 +8,24 @@ interface Props {
 
 defineProps<Props>()
 
+// emit func definition (Typescript signature func taking 2 params)
 const emit = defineEmits<{
   (event: 'update:modelValue', value: boolean): void
 }>()
 
+// calls the above sinature func to emit event closedialog  
 function closeDialog() {
   emit('update:modelValue', false)
 }
 </script>
 
 <template>
+  <!-- Listen event update -->
   <v-dialog
     :model-value="modelValue"
     max-width="820"
-    @update:model-value="emit('update:modelValue', $event)"
+    persistent
+    @update:model-value="emit('update:modelValue', $event)" 
   >
     <v-card rounded="lg" class="movie-details-modal">
 
@@ -70,20 +73,23 @@ function closeDialog() {
 
             <!-- Movie Information -->
             <div class="movie-information">
-
+              <!-- Name -->
               <h1 class="text-h4 font-weight-regular mb-2">
                 {{ movie.name }}
               </h1>
 
+              <!-- Year -->
               <p class="text-body-1 text-medium-emphasis mb-5">
                 Release year: {{ movie.yearOfRelease }}
               </p>
 
+              <!-- Producer -->
               <div class="detail-item">
                 <strong>Producer:</strong>
                 {{ movie.producer?.name || 'Unknown' }}
               </div>
 
+              <!-- Genres array to string -->
               <div class="detail-item">
                 <strong>Genre:</strong>
 
@@ -93,6 +99,7 @@ function closeDialog() {
                 }}
               </div>
 
+              <!-- Actors array to string -->
               <div class="detail-item">
                 <strong>Cast:</strong>
 
@@ -102,6 +109,7 @@ function closeDialog() {
                 }}
               </div>
 
+              <!-- Plot para -->
               <div class="plot-section">
                 <strong>Plot</strong>
 
@@ -120,20 +128,21 @@ function closeDialog() {
         <v-card-actions class="modal-footer">
           <v-spacer />
 
-          <v-btn
+          <!-- <v-btn
             color="grey-darken-1"
             variant="flat"
             size="large"
             @click="closeDialog"
           >
             Close
-          </v-btn>
+          </v-btn> -->
         </v-card-actions>
 
       </template>
     </v-card>
   </v-dialog>
 </template>
+
 <style scoped>
 .movie-details-modal {
   width: 100%;

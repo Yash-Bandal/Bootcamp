@@ -12,6 +12,7 @@
       </p>
     </div>
 
+    <!-- Error area -->
     <v-alert
       v-if="error"
       type="error"
@@ -21,15 +22,15 @@
       {{ error }}
     </v-alert>
 
-    <!-- Movie Form -->
-     <!-- Form Loading -->
-      <div
-        v-if="loadingForm"
-        class="d-flex justify-center align-center py-10"
-      >
-        <LoadingSpinner/>
-      </div>
+    <!-- Form Loading -->
+    <div
+      v-if="loadingForm"
+      class="d-flex justify-center align-center py-10"
+    >
+      <LoadingSpinner/>
+    </div>
 
+    <!-- Movie Form -->
       <v-card
         v-else
         class="form-card"

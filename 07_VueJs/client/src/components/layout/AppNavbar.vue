@@ -24,9 +24,9 @@
           Movies
         </RouterLink>
 
-        <RouterLink to="/movies/create" class="nav-link">
+        <!-- <RouterLink to="/movies/create" class="nav-link">
           Add Movie
-        </RouterLink>
+        </RouterLink> -->
       </nav>
 
       </nav>

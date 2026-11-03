@@ -2,20 +2,36 @@
   <v-container fluid class="movies-container">
 
     <!-- Page Heading -->
-    <div class="movies-header">
-      <div class="d-flex align-center ga-2">
-        <h1 class="movies-heading">Movies</h1>
+    <div class="movies-header d-flex align-center justify-space-between flex-wrap ga-4">
 
-        <v-icon
-          icon="mdi-movie-open-outline"
-          size="30"
-          color="#333"
-        />
+      <!-- Heading -->
+      <div>
+        <div class="d-flex align-center ga-2">
+          <h1 class="movies-heading">Movies</h1>
+
+          <v-icon
+            icon="mdi-movie-open-outline"
+            size="30"
+            color="#333"
+          />
+        </div>
+
+        <p class="movies-subheading">
+          Explore and manage your movie collection
+        </p>
       </div>
 
-      <p class="movies-subheading">
-        Explore and manage your movie collection
-      </p>
+      <!-- Add Movie Button -->
+      <v-btn
+        to="/movies/create"
+        variant="outlined"
+        color="black"
+        append-icon="mdi-plus"
+        class="add-movie-btn"
+      >
+        Add Movie
+      </v-btn>
+
     </div>
 
     <!-- API Error -->
@@ -72,8 +88,8 @@
 
     <!-- Movie Details Dialog -->
     <MovieDetailModal
-      v-model="detailsDialog"
-      :movie="detailMovie"
+      v-model="modelValue"
+      :movie="ModalMovie"
     />
 
   </v-container>
@@ -103,8 +119,8 @@ const {
 } = storeToRefs(movieStore)
 
 // Local UI State
-const detailsDialog = ref(false)
-const detailMovie = ref<Movie | null>(null)
+const modelValue = ref(false)
+const ModalMovie = ref<Movie | null>(null)
 
 // Fetch movies
 onMounted(() => {
@@ -150,8 +166,8 @@ async function confirmDelete(movie: Movie) {
 
 // Open Movie Details
 function handleView(movie: Movie) {
-  detailMovie.value = movie
-  detailsDialog.value = true
+  modelValue.value = true
+  ModalMovie.value = movie
 }
 
 // Navigate to Edit Movie
@@ -189,6 +205,24 @@ function handleEdit(movie: Movie) {
   color: #777;
   margin: 5px 0 0;
   line-height: 1.4;
+}
+
+.add-movie-btn {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 14px;
+  font-weight: 600;
+  height: 42px;
+  padding: 0 18px;
+  border: 1px solid #222 !important;
+  border-radius: 8px;
+  background: transparent !important;
+  box-shadow: none !important;
+  transition: all 0.2s ease;
+}
+
+.add-movie-btn:hover {
+  background: #f5f5f5 !important;
 }
 
 @media (max-width: 600px) {
