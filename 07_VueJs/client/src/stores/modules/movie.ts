@@ -30,7 +30,10 @@ export const useMovieStore = defineStore('movie', {
   actions: {
     // Fetch all movies
     async fetchMovies() {
-      if (this.moviesLoaded) return
+      // dont fetch if already movies loaded  
+      if (this.moviesLoaded){
+          return
+      } 
 
       this.loadingMovies = true
       this.error = ''
@@ -104,7 +107,7 @@ export const useMovieStore = defineStore('movie', {
       try {
         await deleteMovieRequest(id)
 
-        // Update local list without another API call
+        // Update local list without another API call (avoid refetching of movies)
         this.movies = this.movies.filter(movie => movie.id !== id)
       } catch (err) {
         this.error = getErrorMessage(err, 'Failed to delete movie.')

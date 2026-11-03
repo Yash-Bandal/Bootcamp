@@ -12,8 +12,6 @@ export async function getProducers(): Promise<Person[]> {
   return response.data
 }
 
-export async function createProducer(
-  request: PersonRequest,
-): Promise<CreatePersonResponse> {
+export async function createProducer(request: PersonRequest, ): Promise<CreatePersonResponse> {
   return apiPost<CreatePersonResponse>('/producers', request)
 }

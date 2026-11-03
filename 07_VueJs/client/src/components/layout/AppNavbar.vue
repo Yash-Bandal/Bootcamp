@@ -44,7 +44,7 @@ import { RouterLink } from 'vue-router'
 }
 .navbar-container {
   /* max-width: 1180px; */
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   padding-left: 32px;
   padding-right: 32px;

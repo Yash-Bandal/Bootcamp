@@ -1,4 +1,3 @@
-
 <template>
   <v-container fluid class="movies-container">
 
@@ -18,9 +17,6 @@
         Explore and manage your movie collection
       </p>
     </div>
-    <!-- <div class="d-flex flex-wrap align-center justify-space-between ga-3">
-      <h1 class="movies-heading">Movies</h1>
-    </div> -->
 
     <!-- API Error -->
     <v-alert
@@ -166,7 +162,7 @@ function handleEdit(movie: Movie) {
 
 <style scoped>
 .movies-container {
-  max-width: 1400px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 24px 28px;
 }
