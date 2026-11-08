@@ -8,7 +8,7 @@ interface AuthResponse {
 }
 
 const DEMO_USER = {
-  emailId: 'yash.test@gmail.com',
+  emailId: 'yb.testing@gmail.com',
   password: 'Yash@1234',
 }
 
