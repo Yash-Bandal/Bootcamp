@@ -20,7 +20,9 @@ export const useActorStore = defineStore('actor', {
     error: '',
   }),
 
-  getters: {},
+  getters: {
+    allActors: (state) => state.actors
+  },
 
   actions: {
     // Fetch actors

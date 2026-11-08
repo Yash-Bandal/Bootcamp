@@ -15,6 +15,12 @@ const router = createRouter({
       component: () => import('../views/Movies.vue'), 
     },
     {
+      path: '/movies/:id',
+      name: 'Movies Dialog',
+      // Lazy loading format
+      component: () => import('../views/Movies.vue'), 
+    },
+    {
       path: '/movies/create',
       name: 'CreateMovie',
       component: () => import('../views/MovieForm.vue'),

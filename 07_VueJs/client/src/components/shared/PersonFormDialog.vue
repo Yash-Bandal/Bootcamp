@@ -26,7 +26,7 @@ const bio = ref('')
 const dob = ref('')
 const gender = ref('')
 
-const loading = ref(false)
+const saving = ref(false)
 const error = ref('')
 
 const dialogTitle = ref('')
@@ -38,6 +38,7 @@ const requiredRule = (value: string) =>
 const dateRule = (value: string) =>
   !!value || 'Date of birth is required.'
 
+// change type text, as parent `personDialogType` changes
 watch(
   () => props.type,
   (type) => {
@@ -46,6 +47,7 @@ watch(
   { immediate: true }
 )
 
+// To reset when parent -> showPersonDialog.value = true (on open , not close)
 watch(
   () => props.modelValue,
   (isOpen) => {
@@ -59,8 +61,11 @@ watch(
   }
 )
 
+// Cant close while saving
 function closeDialog() {
-  if (loading.value) return
+  if (saving.value) {
+    return
+  }
 
   emit('update:modelValue', false)
 }
@@ -80,7 +85,7 @@ async function handleSave() {
     gender: gender.value,
   }
 
-  loading.value = true
+  saving.value = true
 
   try {
     let personId: number
@@ -99,7 +104,7 @@ async function handleSave() {
     error.value =
       err instanceof Error ? err.message : 'Failed to save person.'
   } finally {
-    loading.value = false
+    saving.value = false
   }
 }
 </script>
@@ -174,7 +179,7 @@ async function handleSave() {
 
           <v-btn
             variant="text"
-            :disabled="loading"
+            :disabled="saving"
             @click="closeDialog"
           >
             Cancel
@@ -183,8 +188,8 @@ async function handleSave() {
           <v-btn
             color="primary"
             variant="flat"
-            :loading="loading"
-            :disabled="loading"
+            :saving="saving"
+            :disabled="saving"
             type="submit"
           >
             Save

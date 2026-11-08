@@ -58,7 +58,7 @@
 
     <!-- Empty State -->
     <v-alert
-      v-else-if="movies.length === 0"
+      v-else-if="allMovies.length === 0"
       type="info"
       variant="tonal"
     >
@@ -69,19 +69,19 @@
     <v-row v-else class="movie-grid">
 
       <v-col
-        v-for="movie in movies"
+        v-for="movie in allMovies"
         :key="movie.id"
         cols="12"
         sm="6"
         md="4"
         lg="3"
       >
-        <MovieCard
-          :movie="movie"
-          @view="handleView"
-          @edit="handleEdit"
-          @delete="confirmDelete"
-        />
+          <MovieCard
+            :movie="movie"
+            @view="handleView"
+            @edit="handleEdit"
+            @delete="confirmDelete"
+          />
       </v-col>
 
     </v-row>
@@ -97,7 +97,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref , computed} from 'vue'
 import { storeToRefs } from 'pinia'
 import { useMovieStore } from '../stores'
 import type { Movie } from '../types'
@@ -113,7 +113,7 @@ const movieStore = useMovieStore()
 const router = useRouter()
 
 const {
-  movies,
+  allMovies,
   loadingMovies,
   error,
 } = storeToRefs(movieStore)
@@ -121,6 +121,16 @@ const {
 // Local UI State
 const modelValue = ref(false)
 const ModalMovie = ref<Movie | null>(null)
+
+// Favourite Movies
+const favouriteMovieIds = ref<number[]>([])
+
+// computed
+const favouriteMovies = computed(() => {
+  return allMovies.value.filter(movie =>
+    favouriteMovieIds.value.includes(movie.id)
+  );
+})
 
 // Fetch movies
 onMounted(() => {
@@ -160,7 +170,7 @@ async function confirmDelete(movie: Movie) {
       text: 'The movie has been deleted.',
       icon: 'success',
       confirmButtonColor: '#3085d6',
-    })
+    }) 
   }
 }
 
@@ -174,6 +184,7 @@ function handleView(movie: Movie) {
 function handleEdit(movie: Movie) {
   router.push(`/movies/${movie.id}/edit`)
 }
+
 </script>
 
 <style scoped>

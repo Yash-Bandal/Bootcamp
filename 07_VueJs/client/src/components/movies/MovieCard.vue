@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import type { Movie } from '../../types'
 
-defineProps<{
-  movie: Movie
-}>()
+interface Props {
+  movie: Movie,
+}
+
+const props = defineProps<Props>()
 
 const emit = defineEmits<{
   (event: 'edit', movie: Movie): void
   (event: 'delete', movie: Movie): void
   (event: 'view', movie: Movie): void
-}>()
+  (event: 'toggleFav', movie: Movie): void
+}>()  
 
 </script>
 
@@ -111,7 +114,7 @@ const emit = defineEmits<{
   aspect-ratio: 1.08 / 1;
   min-height: 300px;
   overflow: hidden;
-  background: #171717;
+  /* background: #171717; */
   cursor: default;
 }
 
@@ -180,6 +183,7 @@ const emit = defineEmits<{
 
   display: -webkit-box;
   -webkit-box-orient: vertical;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   overflow: hidden;
 }
@@ -212,6 +216,7 @@ const emit = defineEmits<{
 
   display: -webkit-box;
   -webkit-box-orient: vertical;
+  line-clamp: 2;
   -webkit-line-clamp: 3;
   overflow: hidden;
 }

@@ -25,7 +25,10 @@ export const useMovieStore = defineStore('movie', {
     error: '',
   }),
 
-  getters: {},
+  getters: {
+    allMovies: (state) => state.movies,
+    selectedMovie : (state) => state.currentMovie,
+  },
 
   actions: {
     // Fetch all movies

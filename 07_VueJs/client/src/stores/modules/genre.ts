@@ -16,7 +16,9 @@ export const useGenreStore = defineStore('genre', {
     error: '',
   }),
 
-  getters: {},
+  getters: {
+    allGenres: (state) => state.genres,
+  },
 
   actions: {
     // Fetch genres

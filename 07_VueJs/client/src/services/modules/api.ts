@@ -1,10 +1,21 @@
 import axios, { type AxiosError } from 'axios'
+import { getAccessToken } from './authToken'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+})
+
+api.interceptors.request.use(config => {
+  const token = getAccessToken()
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+
+  return config
 })
 
 // Standard structure for API errors
@@ -19,7 +30,7 @@ export class ApiError extends Error {
   }
 }
 
-// Extract a useful error message from the backend response
+// Extract a useful error message from the backend response 
 function getBackendErrorMessage(data: unknown): string | undefined {
   if (typeof data === 'string' && data.trim()) {
     return data
@@ -32,6 +43,7 @@ function getBackendErrorMessage(data: unknown): string | undefined {
   const body = data as Record<string, unknown>
 
   if (typeof body.message === 'string') return body.message
+  if (typeof body.Message === 'string') return body.Message
   if (typeof body.title === 'string') return body.title
   if (typeof body.detail === 'string') return body.detail
 
@@ -84,14 +96,14 @@ export async function apiGet<T>(endpoint: string): Promise<T>
 }
 
 // POST
-export async function apiPost<T>(endpoint: string, body: unknown, ): Promise<T> 
+export async function apiPost<T>(endpoint: string, body: object, ): Promise<T> 
 {
   const response = await api.post<T>(endpoint, body)
   return response.data
 }
 
 // PUT
-export async function apiPut<T>(endpoint: string, body: unknown, ): Promise<T> 
+export async function apiPut<T>(endpoint: string, body: object, ): Promise<T> 
 {
   const response = await api.put<T>(endpoint, body)
   return response.data
@@ -103,12 +115,23 @@ export async function apiDelete(endpoint: string): Promise<void>
   await api.delete(endpoint)
 }
 
-// File upload
-export async function apiUpload<T>(endpoint: string, formData: FormData, ): Promise<T> 
+// File upload (will be used for update/ dont remove keep it)
+export async function apiUpdate<T>(endpoint: string, formData: FormData, ): Promise<T> 
 {
   const response = await api.put<T>(endpoint, formData, {
     headers: {
-      'Content-Type': undefined,
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+
+  return response.data
+}
+
+export async function apiUpload<T>(endpoint: string, formData: FormData, ): Promise<T> 
+{
+  const response = await api.post<T>(endpoint, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
     },
   })
 

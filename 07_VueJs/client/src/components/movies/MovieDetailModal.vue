@@ -128,14 +128,14 @@ function closeDialog() {
         <v-card-actions class="modal-footer">
           <v-spacer />
 
-          <!-- <v-btn
+          <v-btn
             color="grey-darken-1"
             variant="flat"
             size="large"
             @click="closeDialog"
           >
             Close
-          </v-btn> -->
+          </v-btn>
         </v-card-actions>
 
       </template>
@@ -153,7 +153,7 @@ function closeDialog() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 18px;
+  padding: 4px 18px;
 }
 
 .modal-content {

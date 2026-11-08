@@ -23,7 +23,9 @@ export const useProducerStore = defineStore('producer', {
     error: '',
   }),
 
-  getters: {},
+  getters: {
+    allProducers: (state) => state.producers,
+  },
 
   actions: {
     // Fetch producers

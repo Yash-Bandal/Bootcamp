@@ -65,8 +65,8 @@
                 density="comfortable"
                 :rules="[
                   value => !!value || 'Release year is required',
-                  value => Number(value) >= 1888 || 'Enter a valid release year',
-                  value => Number(value) <= new Date().getFullYear() || 'Year cannot be in the future',
+                  value => Number(value) >= 0 || 'Enter a valid release year',
+                  // value => Number(value) <= new Date().getFullYear() || 'Year cannot be in the future',
                 ]"
                 required
                 :disabled="saving"
@@ -93,7 +93,7 @@
               <div class="d-flex align-start ga-2">
                 <v-select
                   v-model="form.producerId"
-                  :items="producers"
+                  :items="allProducers"
                   item-title="name"
                   item-value="id"
                   label="Producer"
@@ -124,7 +124,7 @@
               <div class="d-flex align-start ga-2">
                 <v-select
                   v-model="form.actorIds"
-                  :items="actors"
+                  :items="allActors"
                   item-title="name"
                   item-value="id"
                   label="Actors"
@@ -155,7 +155,7 @@
             <v-col cols="12">
               <v-select
                 v-model="form.genreIds"
-                :items="genres"
+                :items="allGenres"
                 item-title="name"
                 item-value="id"
                 label="Genres"
@@ -243,20 +243,22 @@
 </template>
 
 <script setup lang="ts">
+// Dependencies
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRoute, useRouter } from 'vue-router'
+
+// Modules
 import {
   useMovieStore,
   useActorStore,
   useProducerStore,
   useGenreStore,
 } from '../stores'
-
 import { uploadMoviePoster } from '../services'
-
 import type { MovieRequest } from '../types'
 
+// Components
 import PersonFormDialog from '../components/shared/PersonFormDialog.vue'
 import LoadingSpinner from '../components/shared/LoadingSpinner.vue'
 
@@ -270,10 +272,10 @@ const producerStore = useProducerStore()
 const genreStore = useGenreStore()
 
 // Store State
-const { actors } = storeToRefs(actorStore)
-const { producers } = storeToRefs(producerStore)
-const { genres } = storeToRefs(genreStore)
-const { error } = storeToRefs(movieStore)
+const { allActors } = storeToRefs(actorStore)
+const { allProducers } = storeToRefs(producerStore)
+const { allGenres } = storeToRefs(genreStore)
+const { error, selectedMovie } = storeToRefs(movieStore)
 
 const isEditMode = computed(() => route.params.id !== undefined)
 
@@ -298,15 +300,17 @@ const form = ref<MovieRequest>({
 })
 
 watch(posterFile, (file) => {
-  // Clean up the previous preview URL
+  // Clean up the previous preview URL 
   if (posterPreview.value.startsWith('blob:')) {
     URL.revokeObjectURL(posterPreview.value)
   }
 
   posterPreview.value = ''
 
-  // No file selected
-  if (!file) return
+  // No file selected (Stop callback)
+  if (!file){
+    return
+  } 
 
   // Validate file type
   if (!file.type.startsWith('image/')) {
@@ -333,20 +337,29 @@ onMounted(async () => {
   loadingForm.value = true
 
   try {
+    // Fetch Entities
     await Promise.all([
       actorStore.fetchActors(),
       producerStore.fetchProducers(),
       genreStore.fetchGenres(),
     ])
 
+    // Determine If Edit Mode
     if (isEditMode.value) {
+      // get id from route
       const movieId = getValidMovieId()
 
       if (movieId === null) {
         throw new Error('Invalid movie ID in URL.')
       }
 
-      const movie = await movieStore.fetchMovieById(movieId)
+      await movieStore.fetchMovieById(movieId)
+
+      if (!selectedMovie.value) {
+        throw new Error('Movie not found.')
+      }
+
+      const movie = selectedMovie.value;
 
       form.value = {
         name: movie.name,
@@ -373,6 +386,7 @@ function openPersonDialog(type: 'actor' | 'producer') {
   showPersonDialog.value = true
 }
 
+// On Adding Actor/Producer Add it to Form -> ActorId[] 
 function handlePersonSaved(personId: number) {
   if (personDialogType.value === 'actor') {
     if (!form.value.actorIds.includes(personId)) {
@@ -417,7 +431,10 @@ function handlePosterChange(event: Event) {
 }
 
 async function handleSubmit() {
-  if (saving.value) return
+  // If already saving, cant submit 
+  if (saving.value){
+    return
+  }
 
   error.value = ''
 
@@ -426,8 +443,7 @@ async function handleSubmit() {
     return
   }
 
-  if (!form.value.yearOfRelease || form.value.yearOfRelease < 1888 ||
-      form.value.yearOfRelease > new Date().getFullYear()) {
+  if (!form.value.yearOfRelease) {
     error.value = 'Please enter a valid release year.'
     return
   }
@@ -449,7 +465,17 @@ async function handleSubmit() {
 
   saving.value = true
 
+  // If edit mode, perform updation
   try {
+    // 1. Upload poster first, if selected
+    if (posterFile.value) {
+      const imageUrl = await uploadMoviePoster(posterFile.value)
+
+      // 2. Add the returned URL to MovieRequest
+      form.value.coverImage = imageUrl
+    }
+
+    // 3. Create or update movie
     if (isEditMode.value) {
       const movieId = getValidMovieId()
 
@@ -458,27 +484,8 @@ async function handleSubmit() {
       }
 
       await movieStore.editMovie(movieId, form.value)
-
-      if (posterFile.value) {
-        await uploadMoviePoster(movieId, posterFile.value)
-      }
     } else {
-      const createdMovie = await movieStore.addMovie(form.value)
-
-      if (posterFile.value) {
-        const result = createdMovie as {
-          data?: { id?: number }
-          id?: number
-        }
-
-        const movieId = result?.data?.id ?? result?.id
-
-        if (movieId === undefined) {
-          throw new Error('Movie created, but ID was not returned.')
-        }
-
-        await uploadMoviePoster(movieId, posterFile.value)
-      }
+      await movieStore.addMovie(form.value)
     }
 
     await router.push('/movies')
