@@ -122,16 +122,6 @@ const {
 const modelValue = ref(false)
 const ModalMovie = ref<Movie | null>(null)
 
-// Favourite Movies
-const favouriteMovieIds = ref<number[]>([])
-
-// computed
-const favouriteMovies = computed(() => {
-  return allMovies.value.filter(movie =>
-    favouriteMovieIds.value.includes(movie.id)
-  );
-})
-
 // Fetch movies
 onMounted(() => {
   movieStore.fetchMovies()

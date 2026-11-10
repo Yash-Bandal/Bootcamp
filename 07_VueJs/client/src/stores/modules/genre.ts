@@ -22,7 +22,7 @@ export const useGenreStore = defineStore('genre', {
 
   actions: {
     // Fetch genres
-    async fetchGenres() {
+    async fetchGenres(): Promise<void> {
       if (this.genresLoaded) return
 
       this.loadingGenres = true

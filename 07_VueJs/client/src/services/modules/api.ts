@@ -8,6 +8,8 @@ const api = axios.create({
   },
 })
 
+// Interceptors
+// centralized request handling.
 api.interceptors.request.use(config => {
   const token = getAccessToken()
 
@@ -17,6 +19,31 @@ api.interceptors.request.use(config => {
 
   return config
 })
+
+api.interceptors.response.use(
+  // Success case
+  response => response,
+
+  // Error case - Normalize all Axios errors
+  (error: AxiosError) => {
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status
+      const details = error.response?.data
+
+      const message =
+        getBackendErrorMessage(details) ??
+        (status
+          ? `Request failed with status ${status}.`
+          : error.message || 'Unable to connect to the server.')
+
+      return Promise.reject(
+        new ApiError(message, status, details),
+      )
+    }
+
+    return Promise.reject(error)
+  },
+)
 
 // Standard structure for API errors
 export class ApiError extends Error {
@@ -50,30 +77,6 @@ function getBackendErrorMessage(data: unknown): string | undefined {
   return undefined
 }
 
-// Normalize all Axios errors
-api.interceptors.response.use(
-  response => response,
-
-  (error: AxiosError) => {
-    if (axios.isAxiosError(error)) {
-      const status = error.response?.status
-      const details = error.response?.data
-
-      const message =
-        getBackendErrorMessage(details) ??
-        (status
-          ? `Request failed with status ${status}.`
-          : error.message || 'Unable to connect to the server.')
-
-      return Promise.reject(
-        new ApiError(message, status, details),
-      )
-    }
-
-    return Promise.reject(error)
-  },
-)
-
 // Helper for displaying consistent error messages
 export function getErrorMessage(error: unknown, fallback = 'Something went wrong.', ): string 
 {
@@ -88,6 +91,7 @@ export function getErrorMessage(error: unknown, fallback = 'Something went wrong
   return fallback
 }
 
+// API Methods
 // GET
 export async function apiGet<T>(endpoint: string): Promise<T> 
 {

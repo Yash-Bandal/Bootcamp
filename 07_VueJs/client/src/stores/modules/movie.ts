@@ -32,7 +32,7 @@ export const useMovieStore = defineStore('movie', {
 
   actions: {
     // Fetch all movies
-    async fetchMovies() {
+    async fetchMovies(): Promise<void> {
       // dont fetch if already movies loaded  
       if (this.moviesLoaded){
           return
@@ -53,12 +53,11 @@ export const useMovieStore = defineStore('movie', {
     },
 
     // Fetch one movie
-    async fetchMovieById(id: number) {
+    async fetchMovieById(id: number): Promise<void> {
       this.error = ''
 
       try {
         this.currentMovie = await getMovieById(id)
-        return this.currentMovie
       } catch (err) {
         this.error = getErrorMessage(err, 'Failed to fetch movie.')
         throw err
@@ -66,7 +65,7 @@ export const useMovieStore = defineStore('movie', {
     },
 
     // Create movie
-    async addMovie(request: MovieRequest) {
+    async addMovie(request: MovieRequest): Promise<unknown> {
       this.savingMovie = true
       this.error = ''
 
@@ -86,7 +85,7 @@ export const useMovieStore = defineStore('movie', {
     },
 
     // Update movie
-    async editMovie(id: number, request: MovieRequest) {
+    async editMovie(id: number, request: MovieRequest): Promise<void> {
       this.savingMovie = true
       this.error = ''
 
@@ -104,7 +103,7 @@ export const useMovieStore = defineStore('movie', {
     },
 
     // Delete movie
-    async deleteMovie(id: number) {
+    async deleteMovie(id: number): Promise<void> {
       this.error = ''
 
       try {

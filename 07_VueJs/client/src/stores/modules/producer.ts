@@ -29,7 +29,7 @@ export const useProducerStore = defineStore('producer', {
 
   actions: {
     // Fetch producers
-    async fetchProducers() {
+    async fetchProducers(): Promise<void> {
       if (this.producersLoaded) return
 
       this.loadingProducers = true

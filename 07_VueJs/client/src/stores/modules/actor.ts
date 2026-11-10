@@ -26,7 +26,7 @@ export const useActorStore = defineStore('actor', {
 
   actions: {
     // Fetch actors
-    async fetchActors() {
+    async fetchActors(): Promise<void> {
       if (this.actorsLoaded) return
 
       this.loadingActors = true

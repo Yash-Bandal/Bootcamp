@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Movie } from '../../types'
+import { ref } from 'vue';
 
 interface Props {
   movie: Movie,
@@ -11,7 +12,6 @@ const emit = defineEmits<{
   (event: 'edit', movie: Movie): void
   (event: 'delete', movie: Movie): void
   (event: 'view', movie: Movie): void
-  (event: 'toggleFav', movie: Movie): void
 }>()  
 
 </script>
@@ -52,7 +52,7 @@ const emit = defineEmits<{
         <h3 class="movie-title">
           {{ movie.name }}
         </h3>
-
+        
         <!-- Movie Details: Visible on Hover -->
         <div class="movie-details">
           <p class="movie-year">

@@ -133,7 +133,6 @@ Views / Components
 |---|---|
 | `/` | Redirects to movies |
 | `/movies` | Movie listing page |
-| `/movies/:id` | Movie listing with selected movie details |
 | `/movies/create` | Create a new movie |
 | `/movies/:id/edit` | Edit an existing movie |
 | `/:pathMatch(.*)*` | Not Found page |
