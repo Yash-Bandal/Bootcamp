@@ -1,4 +1,3 @@
-```vue
 <template>
   <v-app>
     <!-- Authentication in progress -->
@@ -58,4 +57,3 @@ import LoadingSpinner from './components/shared/LoadingSpinner.vue';
 
 import {authStatus, initializeAuth,} from './services/modules/authService'
 </script>
-```
