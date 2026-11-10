@@ -6,11 +6,12 @@ import {
   getMovieById,
   createMovie,
   updateMovie,
+  uploadMoviePoster as uploadMoviePosterRequest,
   deleteMovie as deleteMovieRequest,
   getErrorMessage } from '../../services'
 
 // Types
-import type { Movie, MovieRequest } from '../../types'
+import type { Movie, MovieRequest, CreateMovieResponse } from '../../types'
 
 export const useMovieStore = defineStore('movie', {
   state: () => ({
@@ -65,13 +66,12 @@ export const useMovieStore = defineStore('movie', {
     },
 
     // Create movie
-    async addMovie(request: MovieRequest): Promise<unknown> {
+    async addMovie(request: MovieRequest): Promise<CreateMovieResponse> {
       this.savingMovie = true
       this.error = ''
 
       try {
         const response = await createMovie(request)
-
         // Movie list is now outdated
         this.moviesLoaded = false
 
@@ -96,6 +96,21 @@ export const useMovieStore = defineStore('movie', {
         this.moviesLoaded = false
       } catch (err) {
         this.error = getErrorMessage(err, 'Failed to update movie.')
+        throw err
+      } finally {
+        this.savingMovie = false
+      }
+    },
+
+    // Upload movie poster
+    async uploadMoviePoster(file: File): Promise<string> {
+      this.savingMovie = true
+      this.error = ''
+
+      try {
+        return await uploadMoviePosterRequest(file)
+      } catch (err) {
+        this.error = getErrorMessage(err, 'Failed to upload movie poster.')
         throw err
       } finally {
         this.savingMovie = false

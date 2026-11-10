@@ -185,13 +185,6 @@
                 @change="handlePosterChange"
               />
 
-              <div
-                v-if="posterError"
-                class="text-error text-caption mt-1"
-              >
-                {{ posterError }}
-              </div>
-
               <v-img
                 v-if="posterPreview"
                 :src="posterPreview"
@@ -255,7 +248,7 @@ import {
   useProducerStore,
   useGenreStore,
 } from '../stores'
-import { uploadMoviePoster } from '../services'
+
 import type { MovieRequest } from '../types'
 
 // Components
@@ -275,7 +268,7 @@ const genreStore = useGenreStore()
 const { allActors } = storeToRefs(actorStore)
 const { allProducers } = storeToRefs(producerStore)
 const { allGenres } = storeToRefs(genreStore)
-const { error, selectedMovie } = storeToRefs(movieStore)
+const { selectedMovie } = storeToRefs(movieStore)
 
 const isEditMode = computed(() => route.params.id !== undefined)
 
@@ -287,7 +280,8 @@ const personDialogType = ref<'actor' | 'producer'>('actor')
 
 const posterFile = ref<File | null>(null)
 const posterPreview = ref('')
-const posterError = ref('')
+
+const error = ref('')
 
 const form = ref<MovieRequest>({
   name: '',
@@ -314,7 +308,7 @@ watch(posterFile, (file) => {
 
   // Validate file type
   if (!file.type.startsWith('image/')) {
-    posterError.value =
+    error.value =
       'Invalid file. Please select an image (JPG, PNG, GIF, WEBP, etc.).'
 
     // Reject the invalid file
@@ -323,7 +317,7 @@ watch(posterFile, (file) => {
   }
 
   // Valid image selected
-  posterError.value = ''
+  error.value = ''
   posterPreview.value = URL.createObjectURL(file)
 })
 
@@ -411,7 +405,7 @@ function handlePosterChange(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0] ?? null
 
-  posterError.value = ''
+  error.value = ''
 
   if (!file) {
     posterFile.value = null
@@ -419,7 +413,7 @@ function handlePosterChange(event: Event) {
   }
 
   if (!file.type.startsWith('image/')) {
-    posterError.value = 'Please select a valid image file.'
+    error.value = 'Please select a valid image file.'
     posterFile.value = null
 
     // Clear the invalid selection from the input
@@ -469,7 +463,7 @@ async function handleSubmit() {
   try {
     // 1. Upload poster first, if selected
     if (posterFile.value) {
-      const imageUrl = await uploadMoviePoster(posterFile.value)
+      const imageUrl = await movieStore.uploadMoviePoster(posterFile.value)
 
       // 2. Add the returned URL to MovieRequest
       form.value.coverImage = imageUrl

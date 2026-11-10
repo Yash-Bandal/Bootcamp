@@ -22,4 +22,7 @@ export interface MovieRequest {
   genreIds: number[]
 }
 
+export interface CreateMovieResponse {
+  id: number
+}
 

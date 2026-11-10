@@ -6,7 +6,7 @@ import {
   apiUpload,
 } from './api'
 
-import type { ApiResponse, Movie, MovieRequest } from '../../types'
+import type { ApiResponse, Movie, MovieRequest, CreateMovieResponse } from '../../types'
 
 // Get all movies
 // Immediately return promise object pending that would be resolved to Movies array on success
@@ -23,9 +23,8 @@ export async function getMovieById(id: number): Promise<Movie> {
 
 // Create movie
 // Immediately return promise object pending that would be resolved to any type, int/string/etc on success
-export async function createMovie(movie: MovieRequest): Promise<unknown> {
-  console.log('Movie', movie)
-  return apiPost<unknown>('/movies', movie)
+export async function createMovie(movie: MovieRequest): Promise<CreateMovieResponse> {
+  return apiPost<CreateMovieResponse>('/movies', movie)
 }
 
 // Update movie
@@ -39,11 +38,11 @@ export async function deleteMovie(id: number): Promise<void> {
 }
 
 // Upload or replace movie poster
-export async function updateMoviePoster(movieId: number, file: File, ): Promise<unknown> {
+export async function updateMoviePoster(movieId: number, file: File, ): Promise<string> {
   const formData = new FormData()
   formData.append('file', file)
 
-  return apiUpload<unknown>(`/movies/${movieId}/poster`, formData)
+  return apiUpload<string>(`/movies/${movieId}/poster`, formData)
 }
 
 export async function uploadMoviePoster(file: File): Promise<string> {
