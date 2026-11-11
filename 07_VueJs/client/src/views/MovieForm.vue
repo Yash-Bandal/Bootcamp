@@ -38,7 +38,7 @@
       >
 
       <v-card-text class="pa-0">
-        <v-form @submit.prevent="handleSubmit">
+        <v-form  ref="movieForm" @submit.prevent="handleSubmit">
 
           <v-row class="py-2">
 
@@ -134,6 +134,7 @@
                   chips
                   closable-chips
                   class="flex-grow-1"
+                  :rules="[value => value?.length > 0 || 'Select at least one actor']"
                   :disabled="saving"
                 />
 
@@ -164,6 +165,7 @@
                 multiple
                 chips
                 closable-chips
+                :rules="[value => value?.length > 0 || 'Select at least one genre']"
                 :disabled="saving"
               />
             </v-col>
@@ -184,6 +186,9 @@
                 :disabled="saving"
                 @change="handlePosterChange"
               />
+              <div v-if="posterError" class="text-error text-caption mt-1">
+                {{ posterError }}
+              </div>
 
               <v-img
                 v-if="posterPreview"
@@ -281,6 +286,9 @@ const personDialogType = ref<'actor' | 'producer'>('actor')
 const posterFile = ref<File | null>(null)
 const posterPreview = ref('')
 
+const movieForm = ref()
+
+const posterError = ref('')
 const error = ref('')
 
 const form = ref<MovieRequest>({
@@ -405,7 +413,7 @@ function handlePosterChange(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0] ?? null
 
-  error.value = ''
+  posterError.value = ''
 
   if (!file) {
     posterFile.value = null
@@ -413,7 +421,7 @@ function handlePosterChange(event: Event) {
   }
 
   if (!file.type.startsWith('image/')) {
-    error.value = 'Please select a valid image file.'
+    posterError.value = 'Please select a valid image file.'
     posterFile.value = null
 
     // Clear the invalid selection from the input
@@ -432,30 +440,13 @@ async function handleSubmit() {
 
   error.value = ''
 
-  if (!form.value.name.trim()) {
-    error.value = 'Movie name is required.'
-    return
-  }
+  // 1. Validate all form fields
+  const { valid } = await movieForm.value!.validate()
 
-  if (!form.value.yearOfRelease) {
-    error.value = 'Please enter a valid release year.'
+  if (!valid)
+  {
     return
-  }
-
-  if (!form.value.plot.trim()) {
-    error.value = 'Movie plot is required.'
-    return
-  }
-
-  if (!form.value.producerId) {
-    error.value = 'Please select a producer.'
-    return
-  }
-
-  if (posterFile.value && !posterFile.value.type.startsWith('image/')) {
-    error.value = 'Please select a valid image file.'
-    return
-  }
+  } 
 
   saving.value = true
 
